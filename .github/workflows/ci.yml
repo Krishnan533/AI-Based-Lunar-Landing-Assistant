@@ -1,0 +1,56 @@
+name: AI-Based Lunar Landing Assistant CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-backend:
+    name: Backend Jest Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install Dependencies
+        run: cd backend && npm ci
+      - name: Run Jest Tests
+        run: cd backend && npm test
+
+  test-ai-service:
+    name: AI Microservice Pytest Suite
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Install Dependencies
+        run: |
+          cd ai-service
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run Pytest Suite
+        run: |
+          cd ai-service
+          PYTHONPATH=. pytest
+
+  build-frontend:
+    name: Frontend Vite Production Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install Dependencies & Build
+        run: |
+          cd frontend
+          npm ci --legacy-peer-deps
+          npm run build
