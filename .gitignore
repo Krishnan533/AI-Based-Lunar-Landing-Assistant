@@ -1,0 +1,30 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+.pytest_cache/
+annotated_outputs/
+
+# Environment Variables
+.env
+.env.local
+
+# Builds
+dist/
+build/
+uploads/*
+!uploads/.gitkeep
+
+# IDEs & System
+.DS_Store
+.vscode/
+.idea/
