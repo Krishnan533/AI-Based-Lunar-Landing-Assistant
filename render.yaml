@@ -1,43 +1,56 @@
-# Render Deployment Blueprint for AI-Based Lunar Landing Assistant
 services:
-  # 1. Python AI Microservice (FastAPI + YOLOv8 + OpenCV + TensorFlow)
+  # 1. Python AI Service
   - type: web
     name: lunar-ai-service
-    env: python
-    region: singapore
+    runtime: python
     plan: free
-    buildCommand: "cd ai-service && pip install -r requirements.txt"
-    startCommand: "cd ai-service && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    region: singapore
+    rootDir: ai-service
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.6
 
-  # 2. Node.js Express REST API (5 MongoDB Collections + JWT Auth)
+  # 2. Node.js Backend API
   - type: web
     name: lunar-backend-api
-    env: node
-    region: singapore
+    runtime: node
     plan: free
-    buildCommand: "cd backend && npm install"
-    startCommand: "cd backend && node src/server.js"
+    region: singapore
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node src/server.js
     envVars:
       - key: NODE_ENV
         value: production
+
       - key: JWT_SECRET
         generateValue: true
-      - key: AI_SERVICE_URL
-        value: https://lunar-ai-service.onrender.com
 
-  # 3. React 18 + Vite 3D Cosmic Dark Frontend
-  - type: web
+      - key: AI_SERVICE_URL
+        fromService:
+          type: web
+          name: lunar-ai-service
+          property: hostport
+
+      # Uncomment and replace with your MongoDB Atlas URI
+      # - key: MONGO_URI
+      #   value: mongodb+srv://username:password@cluster.mongodb.net/lunar_landing
+
+  # 3. React Frontend
+  - type: static
     name: lunar-frontend
-    env: static
-    region: singapore
-    buildCommand: "cd frontend && npm install && npm run build"
-    staticPublishPath: "./frontend/dist"
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    publishPath: dist
     envVars:
       - key: VITE_API_BASE_URL
-        value: https://lunar-backend-api.onrender.com/api
+        fromService:
+          type: web
+          name: lunar-backend-api
+          property: hostport
+
     routes:
       - type: rewrite
         source: /*
