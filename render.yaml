@@ -22,6 +22,9 @@ services:
     buildCommand: npm install
     startCommand: node src/server.js
     envVars:
+      - key: NODE_VERSION
+        value: 20.11.1
+
       - key: NODE_ENV
         value: production
 
@@ -43,6 +46,12 @@ services:
     staticPublishPath: dist
 
     envVars:
+      - key: NODE_VERSION
+        value: 20.11.1
+
+      - key: CI
+        value: "false"
+
       - key: VITE_API_BASE_URL
         fromService:
           type: web
