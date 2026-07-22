@@ -32,7 +32,7 @@ services:
         fromService:
           type: web
           name: lunar-ai-service
-          property: url
+          property: host
 
   # 3. React Frontend
   - type: web
@@ -47,7 +47,7 @@ services:
         fromService:
           type: web
           name: lunar-backend-api
-          property: url
+          property: host
 
     routes:
       - type: rewrite

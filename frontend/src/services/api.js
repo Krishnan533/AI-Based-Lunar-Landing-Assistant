@@ -1,6 +1,7 @@
-import axios from 'axios';
-
-const rawBase = import.meta.env.VITE_API_BASE_URL || '/api';
+let rawBase = import.meta.env.VITE_API_BASE_URL || '/api';
+if (rawBase !== '/api' && !rawBase.startsWith('http://') && !rawBase.startsWith('https://')) {
+  rawBase = `https://${rawBase}`;
+}
 const API_BASE_URL = rawBase.endsWith('/api')
   ? rawBase
   : `${rawBase.replace(/\/$/, '')}/api`;

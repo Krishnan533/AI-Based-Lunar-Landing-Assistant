@@ -5,9 +5,16 @@ const Prediction = require('../models/Prediction');
 const axios = require('axios');
 const fs = require('fs');
 const FormData = require('form-data');
-const path = require('path');
+const getAiServiceUrl = () => {
+  let raw = process.env.AI_SERVICE_URL || 'http://127.0.0.1:8000';
+  raw = raw.trim().replace(/\/$/, '');
+  if (!raw.startsWith('http://') && !raw.startsWith('https://')) {
+    return `http://${raw}`;
+  }
+  return raw;
+};
 
-const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://127.0.0.1:8000';
+const AI_SERVICE_URL = getAiServiceUrl();
 
 const inMemoryReports = [];
 const inMemoryImages = [];
