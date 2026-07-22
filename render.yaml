@@ -1,10 +1,13 @@
+# Official Render Blueprint Specification (v1)
+# Repository: https://github.com/Krishnan533/AI-Based-Lunar-Landing-Assistant
+
 services:
-  # 1. Python AI Service
+  # 1. Python Computer Vision AI Service (FastAPI + YOLOv8 + OpenCV + TensorFlow)
   - type: web
     name: lunar-ai-service
     runtime: python
-    plan: free
     region: singapore
+    plan: free
     rootDir: ai-service
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
@@ -12,45 +15,40 @@ services:
       - key: PYTHON_VERSION
         value: 3.11.6
 
-  # 2. Node.js Backend API
+  # 2. Node.js Express REST API (5 MongoDB Collections + JWT Auth)
   - type: web
     name: lunar-backend-api
     runtime: node
-    plan: free
     region: singapore
+    plan: free
     rootDir: backend
     buildCommand: npm install
     startCommand: node src/server.js
     envVars:
       - key: NODE_ENV
         value: production
-
       - key: JWT_SECRET
         generateValue: true
-
       - key: AI_SERVICE_URL
         fromService:
           type: web
           name: lunar-ai-service
-          property: hostport
+          property: url
 
-      # Uncomment and replace with your MongoDB Atlas URI
-      # - key: MONGO_URI
-      #   value: mongodb+srv://username:password@cluster.mongodb.net/lunar_landing
-
-  # 3. React Frontend
+  # 3. React 18 + Vite Cosmic Dark Web App (Static Site)
   - type: static
     name: lunar-frontend
+    region: singapore
+    plan: free
     rootDir: frontend
-    buildCommand: npm install && npm run build
+    buildCommand: npm install --legacy-peer-deps && npm run build
     publishPath: dist
     envVars:
       - key: VITE_API_BASE_URL
         fromService:
           type: web
           name: lunar-backend-api
-          property: hostport
-
+          property: url
     routes:
       - type: rewrite
         source: /*
