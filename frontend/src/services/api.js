@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 let rawBase = import.meta.env.VITE_API_BASE_URL || '/api';
 if (rawBase !== '/api' && !rawBase.startsWith('http://') && !rawBase.startsWith('https://')) {
   rawBase = `https://${rawBase}`;
