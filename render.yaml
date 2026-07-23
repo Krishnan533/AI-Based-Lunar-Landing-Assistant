@@ -56,7 +56,7 @@ services:
         fromService:
           type: web
           name: lunar-backend-api
-          property: host
+          property: url
 
     routes:
       - type: rewrite
