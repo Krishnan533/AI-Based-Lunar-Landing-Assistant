@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 const User = require('../models/User');
 const { inMemoryUsers } = require('../controllers/authController');
 
@@ -25,16 +26,21 @@ const protect = async (req, res, next) => {
     );
 
     let user;
-    try {
-      user = await Promise.race([
-        User.findById(decoded.id).select('-password'),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('TIMEOUT')), 1500)),
-      ]);
-    } catch (e) {
-      user = inMemoryUsers.find((u) => u._id.toString() === decoded.id.toString());
+    const isConnected = mongoose.connection.readyState === 1;
+    let useFallback = !isConnected;
+
+    if (isConnected) {
+      try {
+        user = await Promise.race([
+          User.findById(decoded.id).select('-password'),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('TIMEOUT')), 1500)),
+        ]);
+      } catch (e) {
+        useFallback = true;
+      }
     }
 
-    if (!user && inMemoryUsers.length > 0) {
+    if (useFallback || (!user && inMemoryUsers.length > 0)) {
       user = inMemoryUsers.find((u) => u._id.toString() === decoded.id.toString());
     }
 

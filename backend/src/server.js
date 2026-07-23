@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const PORT = process.env.PORT || 5000;
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/lunar_landing_db';
+const MONGODB_URI = process.env.MONGODB_URI || process.env.MONGO_URI || 'mongodb://localhost:27017/lunar_landing_db';
 
 const connectDB = async () => {
   try {
